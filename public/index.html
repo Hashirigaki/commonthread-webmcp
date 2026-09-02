@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A shared thread for humans and AI agents." />
+    <title>CommonThread</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Shared human–agent workspace</p>
+          <h1>CommonThread</h1>
+        </div>
+        <div class="workspace-badge">
+          <span>Workspace</span>
+          <strong id="workspace-id">thread_001</strong>
+        </div>
+      </header>
+
+      <section class="status-row" aria-live="polite">
+        <span id="connection-status" class="status-dot">Loading thread…</span>
+        <span id="webmcp-status">Checking WebMCP…</span>
+      </section>
+
+      <section id="thread" class="thread" aria-label="Shared thread history"></section>
+
+      <section class="composer" aria-label="Write to the shared workspace">
+        <form id="entry-form">
+          <label for="entry-content">Write to workspace</label>
+          <textarea
+            id="entry-content"
+            name="content"
+            maxlength="4000"
+            placeholder="Share context that humans and agents should be able to read…"
+            required
+          ></textarea>
+          <div class="actions">
+            <button id="mock-agent-button" class="secondary" type="button">
+              Run Mock Gemini
+            </button>
+            <button id="post-button" type="submit">Post as Human</button>
+          </div>
+        </form>
+        <p id="error-message" class="error" role="alert"></p>
+      </section>
+    </main>
+
+    <template id="empty-thread-template">
+      <div class="empty-thread">
+        <p>No entries yet.</p>
+        <span>Post the first shared message below.</span>
+      </div>
+    </template>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

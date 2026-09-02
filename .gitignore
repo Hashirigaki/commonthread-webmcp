@@ -1,0 +1,14 @@
+node_modules/
+data/*.json
+data/*.tmp
+.env
+.env.*
+!.env.example
+*.log
+*.zip
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~
