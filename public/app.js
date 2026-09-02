@@ -4,6 +4,7 @@ const threadElement = document.querySelector("#thread");
 const formElement = document.querySelector("#entry-form");
 const contentElement = document.querySelector("#entry-content");
 const postButton = document.querySelector("#post-button");
+const openaiButton = document.querySelector("#openai-button");
 const mockAgentButton = document.querySelector("#mock-agent-button");
 const errorElement = document.querySelector("#error-message");
 const connectionStatus = document.querySelector("#connection-status");
@@ -128,6 +129,21 @@ mockAgentButton.addEventListener("click", async () => {
   try {
     await runWithBusyState(mockAgentButton, async () => {
       await requestJson("/api/mock-agent/respond", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workspace_thread_id: workspaceThreadId }),
+      });
+      await readThread();
+    });
+  } catch {
+    // The shared error surface already contains the actionable message.
+  }
+});
+
+openaiButton.addEventListener("click", async () => {
+  try {
+    await runWithBusyState(openaiButton, async () => {
+      await requestJson("/api/openai/respond", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ workspace_thread_id: workspaceThreadId }),

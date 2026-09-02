@@ -93,7 +93,7 @@ function buildMockAgentResponse(thread) {
   return [
     `I read ${thread.entries.length} shared thread ${thread.entries.length === 1 ? "entry" : "entries"}.`,
     `The latest human entry says: “${latestHumanEntry.content}”`,
-    "This is a deterministic mock response; the next implementation step can replace only this generator with Gemini.",
+    "This is a deterministic mock response; a provider-backed implementation can replace only this generator.",
   ].join(" ");
 }
 
@@ -118,7 +118,11 @@ async function serveStatic(response, publicDirectory, pathname) {
   }
 }
 
-export function createAppServer({ store, publicDirectory = defaultPublicDirectory }) {
+export function createAppServer({
+  store,
+  openai,
+  publicDirectory = defaultPublicDirectory,
+}) {
   return http.createServer(async (request, response) => {
     response.setHeader("Origin-Agent-Cluster", "?1");
     response.setHeader("X-Content-Type-Options", "nosniff");
@@ -164,10 +168,37 @@ export function createAppServer({ store, publicDirectory = defaultPublicDirector
 
         const entry = await store.appendEntry({
           workspace_thread_id: workspaceThreadId,
-          actor_id: "agent_mock_gemini",
+          actor_id: "agent_mock",
           actor_type: "agent",
-          display_name: "Mock Gemini",
+          display_name: "Mock Agent",
           content: buildMockAgentResponse(thread),
+        });
+        sendJson(response, 201, { ok: true, entry_id: entry.entry_id, entry });
+        return;
+      }
+
+      if (
+        request.method === "POST" &&
+        url.pathname === "/api/openai/respond"
+      ) {
+        const body = await readJson(request);
+        const workspaceThreadId = requiredString(
+          body.workspace_thread_id,
+          "workspace_thread_id",
+          128,
+        );
+        const thread = await store.readThread(workspaceThreadId);
+        if (!thread) {
+          throw new HttpError(404, "Workspace thread not found.");
+        }
+
+        const content = await openai.generateResponse(thread);
+        const entry = await store.appendEntry({
+          workspace_thread_id: workspaceThreadId,
+          actor_id: "agent_openai",
+          actor_type: "agent",
+          display_name: "OpenAI",
+          content,
         });
         sendJson(response, 201, { ok: true, entry_id: entry.entry_id, entry });
         return;
@@ -182,6 +213,19 @@ export function createAppServer({ store, publicDirectory = defaultPublicDirector
     } catch (error) {
       if (error.code === "THREAD_NOT_FOUND") {
         sendJson(response, 404, { error: error.message });
+        return;
+      }
+
+      if (error.code === "OPENAI_NOT_CONFIGURED") {
+        sendJson(response, 503, { error: error.message });
+        return;
+      }
+
+      if (
+        error.code === "OPENAI_REQUEST_FAILED" ||
+        error.code === "OPENAI_EMPTY_RESPONSE"
+      ) {
+        sendJson(response, 502, { error: error.message });
         return;
       }
 
