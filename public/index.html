@@ -9,46 +9,60 @@
   </head>
   <body>
     <main class="shell">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">Shared human–agent workspace</p>
-          <h1>CommonThread</h1>
+      <aside class="sidebar" aria-label="Current CommonThread context">
+        <p class="sidebar-brand">CommonThread</p>
+        <div class="sidebar-group">
+          <p class="sidebar-label">Project</p>
+          <p class="sidebar-value">CommonThread Demo</p>
         </div>
-        <div class="workspace-badge">
-          <span>Workspace</span>
-          <strong id="workspace-id">thread_001</strong>
+        <div class="sidebar-group">
+          <p class="sidebar-label">Current Thread</p>
+          <p class="sidebar-thread" aria-current="page">thread_001</p>
         </div>
-      </header>
+      </aside>
 
-      <section class="status-row" aria-live="polite">
-        <span id="connection-status" class="status-dot">Loading thread…</span>
-        <span id="webmcp-status">Checking WebMCP…</span>
-      </section>
-
-      <section id="thread" class="thread" aria-label="Shared thread history"></section>
-
-      <section class="composer" aria-label="Write to the shared workspace">
-        <form id="entry-form">
-          <label for="entry-content">Write to workspace</label>
-          <textarea
-            id="entry-content"
-            name="content"
-            maxlength="4000"
-            placeholder="Share context that humans and agents should be able to read…"
-            required
-          ></textarea>
-          <div class="actions">
-            <button id="openai-button" class="secondary" type="button">
-              Ask OpenAI to Participate
-            </button>
-            <button id="mock-agent-button" class="secondary" type="button">
-              Run Mock Agent
-            </button>
-            <button id="post-button" type="submit">Post as Human</button>
+      <div class="thread-pane">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Shared human–agent workspace</p>
+            <h1>CommonThread</h1>
           </div>
-        </form>
-        <p id="error-message" class="error" role="alert"></p>
-      </section>
+          <div class="workspace-badge">
+            <span>Current Thread</span>
+            <strong id="workspace-id">thread_001</strong>
+          </div>
+        </header>
+
+        <section class="status-row" aria-live="polite">
+          <span id="connection-status" class="status-dot">Loading thread…</span>
+          <span id="webmcp-status">Checking WebMCP…</span>
+        </section>
+
+        <section id="thread" class="thread" aria-label="Shared thread history"></section>
+
+        <section class="composer" aria-label="Write to the shared workspace">
+          <form id="entry-form">
+            <label for="entry-content">Write to workspace</label>
+            <textarea
+              id="entry-content"
+              name="content"
+              maxlength="4000"
+              placeholder="Share context that humans and agents should be able to read…"
+              required
+            ></textarea>
+            <div class="actions">
+              <button id="openai-button" class="secondary" type="button">
+                Ask OpenAI to Participate
+              </button>
+              <button id="mock-agent-button" class="secondary" type="button">
+                Run Mock Agent
+              </button>
+              <button id="post-button" type="submit">Post as Human</button>
+            </div>
+          </form>
+          <p id="error-message" class="error" role="alert"></p>
+        </section>
+      </div>
     </main>
 
     <template id="empty-thread-template">
